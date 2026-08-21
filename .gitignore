@@ -1,3 +1,5 @@
 node_modules/
 .DS_Store
 *.log
+.github/protection.json
+RELEASE_NOTES.md
