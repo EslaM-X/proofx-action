@@ -10,15 +10,14 @@ async function runAction (inputs) {
     env.PROOFX_SIGNING_KEY = inputs.signingKey
   }
 
-  const proofPath = inputs.proof
   let result = { verified: false }
 
   if (inputs.collect || inputs.prove) {
     result = await runCollectProveVerify(cliPath, inputs, env)
-  } else if (proofPath) {
-    result = await runVerify(cliPath, proofPath, env)
+  } else if (inputs.proof) {
+    result = await runVerify(cliPath, inputs.proof, env)
   } else if (inputs.verify) {
-    result = await runVerifyDefault(cliPath, env)
+    result = await runVerify(cliPath, 'proof.json', env)
   }
 
   result.cliVersion = inputs.version
@@ -28,53 +27,86 @@ async function runAction (inputs) {
 async function runCollectProveVerify (cliPath, inputs, env) {
   if (inputs.collect) {
     core.info('Collecting evidence...')
-    const collectResult = await run(cliPath, ['collect'], env)
-    core.info(collectResult.stdout)
-    if (collectResult.stderr) core.warning(collectResult.stderr)
+    const r = await run(cliPath, ['collect'], env)
+    core.info(r.stdout)
+    if (r.stderr) core.warning(r.stderr)
   }
 
   if (inputs.prove) {
     core.info('Generating proof...')
-    const args = ['prove']
-    const proveResult = await run(cliPath, args, env)
-    core.info(proveResult.stdout)
-    if (proveResult.stderr) core.warning(proveResult.stderr)
+    const r = await run(cliPath, ['prove'], env)
+    core.info(r.stdout)
+    if (r.stderr) core.warning(r.stderr)
   }
 
   if (inputs.verify) {
     core.info('Verifying proof...')
-    return await runVerifyDefault(cliPath, env)
+    return await runVerify(cliPath, 'proof.json', env)
   }
 
-  return { verified: true, proofId: '', proofPath: 'proof.json', checks: [], coverage: 0, summary: 'Proof generated (not verified)' }
-}
-
-async function runVerifyDefault (cliPath, env) {
-  return await runVerify(cliPath, 'proof.json', env)
+  return { verified: true, proofId: '', proofPath: 'proof.json', checks: [], coverage: 0, evidenceCount: 0, summary: 'Proof generated (not verified)' }
 }
 
 async function runVerify (cliPath, proofPath, env) {
-  const verifyResult = await run(cliPath, ['verify', proofPath, '--json'], env)
+  const r = await run(cliPath, ['verify', proofPath], env)
+  const output = r.stdout + r.stderr
+  return parseVerifyOutput(output, proofPath)
+}
 
-  let parsed = {}
-  try {
-    parsed = JSON.parse(verifyResult.stdout)
-  } catch {
-    const jsonMatch = verifyResult.stdout.match(/\{[\s\S]*\}/)
-    if (jsonMatch) {
-      parsed = JSON.parse(jsonMatch[0])
+function parseVerifyOutput (output, proofPath) {
+  const lines = output.split('\n')
+  let proofId = ''
+  let verified = false
+  let coverageScore = 0
+  let evidenceTotal = 0
+  const checks = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+
+    const idMatch = trimmed.match(/ProofX Verification\s*[—–-]\s*(PX-\S+)/)
+    if (idMatch) {
+      proofId = idMatch[1]
+    }
+
+    const checkMatch = trimmed.match(/([✓✗·])\s+(\w+)\s*(?:\(([^)]*)\))?/)
+    if (checkMatch) {
+      const mark = checkMatch[1]
+      const name = checkMatch[2]
+      const detail = checkMatch[3] || ''
+      let status = 'skipped'
+      if (mark === '✓') status = 'ok'
+      else if (mark === '✗') status = 'fail'
+      checks.push({ name, status, detail })
+    }
+
+    const verifiedMatch = trimmed.match(/✓ VERIFIED\s*[—–-]\s*(\d+)\/(\d+)/)
+    if (verifiedMatch) {
+      verified = true
+      evidenceTotal = parseInt(verifiedMatch[2], 10)
+    }
+
+    const notVerifiedMatch = trimmed.match(/✗ NOT VERIFIED\s*[—–-]\s*(\d+)\/(\d+)/)
+    if (notVerifiedMatch) {
+      verified = false
+      evidenceTotal = parseInt(notVerifiedMatch[2], 10)
+    }
+
+    const coverageMatch = trimmed.match(/Verification coverage:\s*(\d+)/)
+    if (coverageMatch) {
+      coverageScore = parseInt(coverageMatch[1], 10)
     }
   }
 
   return {
-    verified: parsed.verified || false,
-    proofId: parsed.proofId || '',
+    verified,
+    proofId,
     proofPath,
-    checks: parsed.checks || [],
-    coverage: parsed.coverage?.score || 0,
-    evidenceCount: parsed.coverage?.total || 0,
-    summary: verifyResult.stdout.trim()
+    checks,
+    coverage: coverageScore,
+    evidenceCount: evidenceTotal,
+    summary: output.trim()
   }
 }
 
-module.exports = { runAction }
+module.exports = { runAction, parseVerifyOutput }

@@ -27,7 +27,10 @@ async function main () {
 
     if (inputs.uploadProof && result.proofPath) {
       try {
-        await artifact.uploadArtifact('proofx-proof', [result.proofPath], '.')
+        const client = artifact.DefaultArtifactClient
+          ? new artifact.DefaultArtifactClient()
+          : artifact
+        await client.uploadArtifact('proofx-proof', [result.proofPath], '.')
         core.info('Proof artifact uploaded')
       } catch (err) {
         core.warning(`Artifact upload failed: ${err.message}`)
