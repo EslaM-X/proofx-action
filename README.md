@@ -1,11 +1,9 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/EslaM-X/proofx/main/static/proofx-logo.svg" width="120" alt="ProofX Logo">
+  <img src="brand/logo/proofx-logo-dark.svg" width="400" alt="ProofX">
 </p>
 
-<h1 align="center">ProofX GitHub Action</h1>
-
 <p align="center">
-  <strong>Cryptographic Evidence Verification for CI/CD</strong>
+  <strong>Cryptographically verifiable evidence for software</strong>
 </p>
 
 <p align="center">
@@ -14,6 +12,7 @@
   <a href="https://github.com/EslaM-X/proofx-action/blob/main/LICENSE"><img src="https://img.shields.io/github/license/EslaM-X/proofx-action" alt="License"></a>
   <a href="https://github.com/EslaM-X/proofx-action/releases"><img src="https://img.shields.io/github/v/release/EslaM-X/proofx-action" alt="Release"></a>
   <a href="https://github.com/EslaM-X/proofx-action"><img src="https://img.shields.io/github/stars/EslaM-X/proofx-action" alt="Stars"></a>
+  <img src="brand/badges/proof-verified-badge.svg" alt="Proof Verified">
 </p>
 
 <p align="center">
@@ -360,6 +359,12 @@ See [LICENSE](LICENSE) for full text.
 ---
 
 <p align="center">
+  <img src="brand/symbol/proofx-symbol-dark.svg" width="64" alt="ProofX Symbol">
+</p>
+
+<p align="center">
+  <strong>VERIFY. TRUST. PROVE.</strong><br>
+  <sub>Cryptographically verifiable evidence for software</sub><br><br>
   Built with care by <a href="https://github.com/EslaM-X">EslaM-X</a><br>
   <sub>Part of the <a href="https://github.com/EslaM-X/proofx">ProofX</a> ecosystem</sub>
 </p>
