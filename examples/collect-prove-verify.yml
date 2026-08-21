@@ -1,0 +1,27 @@
+name: Collect, Prove, and Verify
+
+on:
+  push:
+
+jobs:
+  full-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Full proof pipeline
+        uses: EslaM-X/proofx-action@v0.3.0
+        with:
+          collect: true
+          prove: true
+          verify: true
+          version: "0.3.0"
+        env:
+          PROOFX_SIGNING_KEY: ${{ secrets.PROOFX_SIGNING_KEY }}
+
+      - name: Use verification outputs
+        run: |
+          echo "Verified: ${{ steps.proofx.outputs.verified }}"
+          echo "Proof ID: ${{ steps.proofx.outputs.proof-id }}"
+          echo "Coverage: ${{ steps.proofx.outputs.coverage }}%"

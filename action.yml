@@ -1,0 +1,81 @@
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2026 EslaM-X <eslam.kora60@gmail.com>
+name: "ProofX — Evidence Verification"
+description: "Generate, sign, and verify cryptographic evidence proofs in CI"
+branding:
+  icon: "shield"
+  color: "green"
+
+inputs:
+  proof:
+    description: "Path to an existing proof.json to verify"
+    required: false
+    default: ""
+
+  collect:
+    description: "Collect evidence before proving"
+    required: false
+    default: "false"
+
+  prove:
+    description: "Generate a cryptographic proof"
+    required: false
+    default: "false"
+
+  verify:
+    description: "Verify the proof"
+    required: false
+    default: "true"
+
+  signing-key:
+    description: "Ed25519 private signing key (prefer env: PROOFX_SIGNING_KEY)"
+    required: false
+    default: ""
+
+  fail-on-unverified:
+    description: "Fail the workflow when verification fails"
+    required: false
+    default: "true"
+
+  upload-proof:
+    description: "Upload proof.json as a workflow artifact"
+    required: false
+    default: "true"
+
+  version:
+    description: "ProofX CLI version to use"
+    required: false
+    default: "0.3.0"
+
+outputs:
+  verified:
+    description: "Whether the proof was successfully verified"
+    value: ${{ steps.proofx.outputs.verified }}
+
+  proof-id:
+    description: "Proof identifier"
+    value: ${{ steps.proofx.outputs.proof-id }}
+
+  evidence-count:
+    description: "Number of evidence nodes"
+    value: ${{ steps.proofx.outputs.evidence-count }}
+
+  coverage:
+    description: "Evidence coverage percentage"
+    value: ${{ steps.proofx.outputs.coverage }}
+
+  summary:
+    description: "Human-readable verification summary"
+    value: ${{ steps.proofx.outputs.summary }}
+
+  proof-path:
+    description: "Path to generated proof.json"
+    value: ${{ steps.proofx.outputs.proof-path }}
+
+  verification-json:
+    description: "Machine-readable verification result"
+    value: ${{ steps.proofx.outputs.verification-json }}
+
+runs:
+  using: "node20"
+  main: "dist/index.js"

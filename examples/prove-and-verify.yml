@@ -1,0 +1,20 @@
+name: Prove and Verify
+
+on:
+  push:
+
+jobs:
+  prove:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate and verify proof
+        uses: EslaM-X/proofx-action@v0.3.0
+        with:
+          collect: true
+          prove: true
+          verify: true
+        env:
+          PROOFX_SIGNING_KEY: ${{ secrets.PROOFX_SIGNING_KEY }}

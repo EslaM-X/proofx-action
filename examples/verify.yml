@@ -1,0 +1,16 @@
+name: Verify Proof
+
+on:
+  push:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify proof
+        uses: EslaM-X/proofx-action@v0.3.0
+        with:
+          proof: ./proof.json
