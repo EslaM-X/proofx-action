@@ -22,7 +22,54 @@
 
 ---
 
-## Quick Start
+## 2-Minute Quick Start
+
+Add cryptographic proof generation to your CI in one step.
+
+### Step 1 — Add to your workflow
+
+```yaml
+# .github/workflows/proof.yml
+name: Proof
+on: [push, pull_request]
+
+jobs:
+  proof:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: EslaM-X/proofx-action@v0.3.0
+        with:
+          collect: true
+          prove: true
+          verify: true
+```
+
+### Step 2 — Push
+
+```bash
+git add .github/workflows/proof.yml
+git commit -m "ci: add proof generation"
+git push
+```
+
+### Step 3 — See the result
+
+Go to **Actions** → your workflow run → expand the **ProofX** step:
+
+```
+✓ PROOF VERIFIED
+
+Evidence: 5/5
+Coverage: 100%
+Binding:  PASS
+Signature: PASS
+Artifacts: PASS
+
+Proof ID: PX-56b79e75
+```
+
+**That's it.** Every push now generates a signed, independently verifiable proof.
 
 ### Verify an existing proof
 
@@ -32,7 +79,7 @@
     proof: ./proof.json
 ```
 
-### Generate + verify in one step
+### Upload proof as artifact
 
 ```yaml
 - uses: EslaM-X/proofx-action@v0.3.0
@@ -40,19 +87,7 @@
     collect: true
     prove: true
     verify: true
-```
-
-### Full pipeline with signing
-
-```yaml
-- uses: EslaM-X/proofx-action@v0.3.0
-  with:
-    collect: true
-    prove: true
-    verify: true
-    version: "0.3.0"
-  env:
-    PROOFX_SIGNING_KEY: ${{ secrets.PROOFX_SIGNING_KEY }}
+    upload-proof: true
 ```
 
 ---
