@@ -18,7 +18,9 @@ jobs:
           sudo mv proofx /usr/local/bin/
 
       - name: Collect evidence
-        run: proofx collect
+        run: |
+          proofx init
+          proofx collect
 
       - name: Generate proof
         run: proofx prove
