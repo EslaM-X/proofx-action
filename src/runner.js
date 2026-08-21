@@ -37,6 +37,10 @@ async function runCollectProveVerify (cliPath, inputs, env) {
   }
 
   if (inputs.prove) {
+    core.info('Generating signing key...')
+    const keyResult = await run(cliPath, ['keygen'], env)
+    if (keyResult.stderr) core.info(keyResult.stderr)
+
     core.info('Generating proof...')
     const r = await run(cliPath, ['prove'], env)
     core.info(r.stdout)
