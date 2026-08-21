@@ -17,10 +17,13 @@ jobs:
           chmod +x proofx
           sudo mv proofx /usr/local/bin/
 
-      - name: Collect evidence
+      - name: Initialize ProofX
         run: |
           proofx init
-          proofx collect
+          proofx keygen
+
+      - name: Collect evidence
+        run: proofx collect
 
       - name: Generate proof
         run: proofx prove
