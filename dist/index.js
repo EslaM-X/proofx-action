@@ -1,4 +1,4 @@
-require('./sourcemap-register.js');/******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ 76846:
@@ -80537,6 +80537,10 @@ async function runAction (inputs) {
 
 async function runCollectProveVerify (cliPath, inputs, env) {
   if (inputs.collect) {
+    core.info('Initializing ProofX...')
+    const initResult = await run(cliPath, ['init'], env)
+    if (initResult.stderr) core.info(initResult.stderr)
+
     core.info('Collecting evidence...')
     const r = await run(cliPath, ['collect'], env)
     core.info(r.stdout)
@@ -138532,4 +138536,3 @@ main()
 module.exports = __webpack_exports__;
 /******/ })()
 ;
-//# sourceMappingURL=index.js.map
