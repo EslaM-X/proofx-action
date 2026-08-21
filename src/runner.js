@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-const path = require('path')
 const core = require('@actions/core')
 const { getCLI, run } = require('./cli')
 
@@ -11,7 +10,7 @@ async function runAction (inputs) {
     env.PROOFX_SIGNING_KEY = inputs.signingKey
   }
 
-  let proofPath = inputs.proof
+  const proofPath = inputs.proof
   let result = { verified: false }
 
   if (inputs.collect || inputs.prove) {

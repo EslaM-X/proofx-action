@@ -80510,7 +80510,6 @@ module.exports = { setOutputs }
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 // SPDX-License-Identifier: MIT
-const path = __nccwpck_require__(16928)
 const core = __nccwpck_require__(37484)
 const { getCLI, run } = __nccwpck_require__(4803)
 
@@ -80522,7 +80521,7 @@ async function runAction (inputs) {
     env.PROOFX_SIGNING_KEY = inputs.signingKey
   }
 
-  let proofPath = inputs.proof
+  const proofPath = inputs.proof
   let result = { verified: false }
 
   if (inputs.collect || inputs.prove) {
@@ -80604,7 +80603,6 @@ const SEPARATOR = '\u2501'.repeat(40)
 
 function buildSummary (result) {
   const status = result.verified ? '\u2713 PROOF VERIFIED' : '\u2717 PROOF NOT VERIFIED'
-  const icon = result.verified ? '\u2713' : '\u2717'
 
   const checks = result.checks || []
   const binding = checks.find((c) => c.name === 'binding')
